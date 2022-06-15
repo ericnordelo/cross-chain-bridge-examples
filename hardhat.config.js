@@ -8,6 +8,11 @@ require('hardhat-contract-sizer');
 require('hardhat-deploy');
 require('solidity-coverage');
 
+const MNEMONIC = process.env.MNEMONIC;
+const INFURA_API_KEY = process.env.INFURA_API_KEY;
+const ALCHEMY_ARBITRUM_RPC = process.env.ALCHEMY_ARBITRUM_RPC;
+const ALCHEMY_OPTIMISM_RPC = process.env.ALCHEMY_OPTIMISM_RPC;
+
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 module.exports = {
@@ -17,9 +22,27 @@ module.exports = {
       tags: ['local'],
       allowUnlimitedContractSize: true,
     },
-    ropsten: {
-      url: process.env.ROPSTEN_URL || '',
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    arbitrum: {
+      url: ALCHEMY_ARBITRUM_RPC,
+      accounts: { mnemonic: MNEMONIC },
+      companionNetworks: {
+        l1: 'rinkeby',
+      },
+    },
+    optimism: {
+      url: ALCHEMY_OPTIMISM_RPC,
+      ovm: true,
+      companionNetworks: {
+        l1: 'kovan',
+      },
+    },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${INFURA_API_KEY}`,
+      accounts: { mnemonic: MNEMONIC },
+    },
+    kovan: {
+      url: `https://kovan.infura.io/v3/${INFURA_API_KEY}`,
+      accounts: { mnemonic: MNEMONIC },
     },
   },
   namedAccounts: {
