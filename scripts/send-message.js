@@ -28,7 +28,7 @@ async function main() {
     BigNumber.from(0)
   );
 
-  const tx = await sender.sendCrossChainMessage(greeter, calldata, crossChainTxParams);
+  const tx = await sender.sendCrossChainMessage(greeter, calldata, crossChainTxParams, { gas: 2000000 });
 
   console.log(tx);
 }

@@ -13,6 +13,44 @@ const INFURA_API_KEY = process.env.INFURA_API_KEY;
 const ALCHEMY_ARBITRUM_RPC = process.env.ALCHEMY_ARBITRUM_RPC;
 const ALCHEMY_OPTIMISM_RPC = process.env.ALCHEMY_OPTIMISM_RPC;
 
+const argv = require('yargs/yargs')()
+  .env('')
+  .options({
+    ci: {
+      type: 'boolean',
+      default: false,
+    },
+    coverage: {
+      type: 'boolean',
+      default: false,
+    },
+    gas: {
+      alias: 'enableGasReport',
+      type: 'boolean',
+      default: false,
+    },
+    mode: {
+      alias: 'compileMode',
+      type: 'string',
+      choices: ['production', 'development'],
+      default: 'development',
+    },
+    ir: {
+      alias: 'enableIR',
+      type: 'boolean',
+      default: false,
+    },
+    compiler: {
+      alias: 'compileVersion',
+      type: 'string',
+      default: '0.8.13',
+    },
+    coinmarketcap: {
+      alias: 'coinmarketcapApiKey',
+      type: 'string',
+    },
+  }).argv;
+
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 module.exports = {
@@ -52,3 +90,14 @@ module.exports = {
     alice: 3,
   },
 };
+
+if (argv.tenderly) {
+  const TENDERLY_PROJECT = process.env.TENDERLY_PROJECT;
+  const TENDERLY_USERNAME = process.env.TENDERLY_USERNAME;
+
+  require('@tenderly/hardhat-tenderly');
+  module.exports.tenderly = {
+    project: TENDERLY_PROJECT,
+    username: TENDERLY_USERNAME,
+  };
+}
