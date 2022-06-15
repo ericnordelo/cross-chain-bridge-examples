@@ -11,7 +11,7 @@ contract Sender is CrossChainEnabledArbitrumL1 {
         address destination,
         bytes memory data,
         bytes memory crossChainTxParams
-    ) external {
+    ) external payable {
         _sendCrossChainMessage(destination, data, crossChainTxParams);
     }
 }
