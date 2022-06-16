@@ -12,7 +12,7 @@ contract Greeter {
         return _greeting;
     }
 
-    function setGreeting(string memory greeting_) public {
+    function setGreeting(string memory greeting_) public payable {
         _greeting = greeting_;
     }
 }

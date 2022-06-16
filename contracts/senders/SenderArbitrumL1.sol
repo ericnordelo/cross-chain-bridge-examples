@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "./crosschain/arbitrum/CrossChainEnabledArbitrumL1.sol";
+import "../crosschain/arbitrum/CrossChainEnabledArbitrumL1.sol";
 
-contract Sender is CrossChainEnabledArbitrumL1 {
+contract SenderArbitrumL1 is CrossChainEnabledArbitrumL1 {
     // solhint-disable-next-line no-empty-blocks
     constructor(address bridge_) CrossChainEnabledArbitrumL1(bridge_) {}
 

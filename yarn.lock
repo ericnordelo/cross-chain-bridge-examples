@@ -135,10 +135,10 @@
   resolved "https://registry.yarnpkg.com/@ensdomains/resolver/-/resolver-0.2.4.tgz#c10fe28bf5efbf49bff4666d909aed0265efbc89"
   integrity sha512-bvaTH34PMCbv6anRa9I/0zjLJgY4EuznbEMgbV77JBCQ9KNC46rzi0avuxpOfu+xDjPEtSFGqVEOr5GlUSGudA==
 
-"@ericnordelo/cross-chain-bridge-helpers@^0.2.0":
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/@ericnordelo/cross-chain-bridge-helpers/-/cross-chain-bridge-helpers-0.2.6.tgz#08ad52f048f87ae1de36cb26ee45f0d356a92d26"
-  integrity sha512-s6IhYOCqWq38P464V5H+IQkD+8DU/kHWD3ouLCLCZX5L4yZ/EFEIdLEy5RiJMRicZISW3HFjVRcBlVK42+vXAg==
+"@ericnordelo/cross-chain-bridge-helpers@^0.3.1":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@ericnordelo/cross-chain-bridge-helpers/-/cross-chain-bridge-helpers-0.3.2.tgz#70afdeaba622666acf9bf54e3fbf9c6076689475"
+  integrity sha512-D9r4zvntfkK5FyMGIPLsh0deB7jWEeQqVyqg4I5w0mnRY0LjI8vg1zCCKU5FdgJI5LO0AFObsr6jxB0UDyD3iw==
   dependencies:
     "@arbitrum/sdk" "^2.0.1"
     "@ethersproject/abstract-provider" "^5.6.1"

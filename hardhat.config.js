@@ -16,38 +16,9 @@ const ALCHEMY_OPTIMISM_RPC = process.env.ALCHEMY_OPTIMISM_RPC;
 const argv = require('yargs/yargs')()
   .env('')
   .options({
-    ci: {
+    tenderly: {
       type: 'boolean',
       default: false,
-    },
-    coverage: {
-      type: 'boolean',
-      default: false,
-    },
-    gas: {
-      alias: 'enableGasReport',
-      type: 'boolean',
-      default: false,
-    },
-    mode: {
-      alias: 'compileMode',
-      type: 'string',
-      choices: ['production', 'development'],
-      default: 'development',
-    },
-    ir: {
-      alias: 'enableIR',
-      type: 'boolean',
-      default: false,
-    },
-    compiler: {
-      alias: 'compileVersion',
-      type: 'string',
-      default: '0.8.13',
-    },
-    coinmarketcap: {
-      alias: 'coinmarketcapApiKey',
-      type: 'string',
     },
   }).argv;
 
@@ -69,7 +40,7 @@ module.exports = {
     },
     optimism: {
       url: ALCHEMY_OPTIMISM_RPC,
-      ovm: true,
+      accounts: { mnemonic: MNEMONIC },
       companionNetworks: {
         l1: 'kovan',
       },

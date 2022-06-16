@@ -1,36 +1,33 @@
 const { L2BridgeFactory } = require('@ericnordelo/cross-chain-bridge-helpers');
 const { providers, BigNumber } = require('ethers');
 
-const SenderArbitrumL1 = artifacts.require('SenderArbitrumL1');
+const SenderOptimismL1 = artifacts.require('SenderOptimismL1');
 
 async function main() {
-  const deployment = await deployments.get('SenderArbitrumL1');
-  const sender = await SenderArbitrumL1.at(deployment.address);
-  const params = web3.eth.abi.encodeParameters(['string'], ['Hello Again!']);
+  const deployment = await deployments.get('SenderOptimismL1');
+  const sender = await SenderOptimismL1.at(deployment.address);
   const greeter = '0x8A040481f58ff608d807BF9294d00B082E8DFA17';
 
-  const ARBITRUM_L1_RPC = hre.config.networks.rinkeby.url;
-  const ARBITRUM_L2_RPC = hre.config.networks.arbitrum.url;
+  const OPTIMISM_L1_RPC = hre.config.networks.kovan.url;
+  const OPTIMISM_L2_RPC = hre.config.networks.optimism.url;
 
-  const l1Provider = new providers.JsonRpcProvider(ARBITRUM_L1_RPC);
-  const l2Provider = new providers.JsonRpcProvider(ARBITRUM_L2_RPC);
+  const l1Provider = new providers.JsonRpcProvider(OPTIMISM_L1_RPC);
+  const l2Provider = new providers.JsonRpcProvider(OPTIMISM_L2_RPC);
 
-  const bridge = L2BridgeFactory.get('Arbitrum-L1L2-Rinkeby');
+  const bridge = L2BridgeFactory.get('Optimism-L1L2-Kovan');
   await bridge.loadProviders({ l1Provider, l2Provider });
 
-  // function id plus encoded parameters
-  const calldata = '0xa4136862' + params.slice(2);
+  const calldata = '0x';
 
   const crossChainTxParams = await bridge.getCrossChainTxConfigBytes(
     sender.address,
     greeter,
     calldata,
-    BigNumber.from(0)
+    BigNumber.from(100)
   );
 
   const tx = await sender.sendCrossChainMessage(greeter, calldata, crossChainTxParams, {
-    gas: 20000000,
-    value: '1747850031751',
+    value: 100,
   });
 
   console.log('Transaction sent: ' + tx.tx);
