@@ -84,7 +84,11 @@ library LibOptimismL1 {
 
         if (params.depositValue > 0) {
             // deposit ETH through standard bridge
-            IL1StandardBridge(bridge).depositETHTo(destination, params.gasLimit, data);
+            IL1StandardBridge(bridge).depositETHTo{value: params.depositValue}(
+                destination,
+                params.gasLimit,
+                data
+            );
         } else {
             // send the message directly through the messenger
             address messenger = IL1StandardBridge(bridge).messenger();
