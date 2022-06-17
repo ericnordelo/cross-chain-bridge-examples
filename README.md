@@ -208,7 +208,7 @@ This abstraction (and therefore the implementations) also provide us with modifi
 
 ### Example 1 (send message from arbitrum l1 to l2)
 
-1. Deploy the Greeter in the Abitrum L2 (we are using testnets of course):
+1. Deploy the `Greeter` in the Abitrum L2 (we are using testnets of course):
 
    ```sh
    $ hh deploy --network arbitrum --tags greeter
@@ -339,7 +339,7 @@ This call should fail in the gas estimation, because of the modifier.
 
 Let's go back to the example:
 
-1. Deploy the GreeterOptimismL2 in the Optimism L2 (we are using testnets of course):
+1. Deploy the `GreeterOptimismL2` in the L2 (we are using testnets of course):
 
    ```sh
    $ hh deploy --network optimism --tags greeter_optimism_l2
@@ -419,3 +419,7 @@ task('send-message:optimism-l1-to-l2', 'Sends a cross-chain message from Optimis
 ```
 
 You can see that the task is quite similar to the one for sending the message from Optimism L1 to L2. This is the power of the `@ericnordelo/cross-chain-bridge-helpers` package and the `CrossChainEnabled` abstraction combined.
+
+## NOTES:
+
+- In Optimism you can't deposit ETH and execute a call to a Smart Contract at the same time (calling a payable function with value greater than 0). You can call a function without passing value, but if you pass a value, the calldata is ignored, and only the deposit is executed. The reason behind this is the Optimism design itself. Is not a decision from the designers of this Plugin.
