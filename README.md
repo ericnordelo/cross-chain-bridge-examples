@@ -420,6 +420,6 @@ task('send-message:optimism-l1-to-l2', 'Sends a cross-chain message from Optimis
 
 You can see that the task is quite similar to the one for sending the message from Optimism L1 to L2. This is the power of the `@ericnordelo/cross-chain-bridge-helpers` package and the `CrossChainEnabled` abstraction combined.
 
-## NOTES:
+### NOTES:
 
 - In Optimism you can't deposit ETH and execute a call to a Smart Contract at the same time (calling a payable function with value greater than 0). You can call a function without passing value, but if you pass a value, the calldata is ignored, and only the deposit is executed. The reason behind this is the Optimism design itself. Is not a decision from the designers of this Plugin.
