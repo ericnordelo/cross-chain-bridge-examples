@@ -230,7 +230,7 @@ This abstraction (and therefore the implementations) also provide us with modifi
     $ hh greet --network arbitrum
    ```
 
-4. Run the task for sending the message from Arbitrum L1 to L2, using the address of the deployed Greeter as the target, and any message you want:
+4. Run the task for sending the message from Arbitrum L1 to L2, using the address of the deployed `Greeter` as the `target`, and any message you want:
 
    ```sh
     $ hh send-message:arbitrum-l1-to-l2 --target \
@@ -294,3 +294,122 @@ task('send-message:arbitrum-l1-to-l2', 'Sends a cross-chain message from Arbitru
 In a general overview, we are using the providers from hardhat to instantiate the `L2Bridge`, and we are using this instance to get the `crossChainTxParams` config required for this bridge.
 
 Then we are calling the sendCrossChainMessage with the `target`, the `calldata`, and the configuration for sending the message through the bridge (`crossChainTxParams`).
+
+### Example 2 (send message from optimism l1 to l2)
+
+For this example we are going to use a different Greeter: `GreeterOptimismL2`.
+
+```ts
+ import "./crosschain/optimism/CrossChainEnabledOptimismL2.sol";
+
+ contract GreeterOptimismL2 is CrossChainEnabledOptimismL2 {
+     string private _greeting;
+
+     constructor(address bridge_, string memory greeting_) CrossChainEnabledOptimismL2(bridge_) {
+         _greeting = greeting_;
+     }
+
+     function greet() public view returns (string memory) {
+         return _greeting;
+     }
+
+     function setGreeting(string memory greeting_) public payable onlyCrossChain {
+         _greeting = greeting_;
+     }
+ }
+```
+
+Themain difference is that we are extending from the `CrossChainEnabledOptimismL2`, and the purpose of this is to how the usage of the `onlyCrossChain` modifier provided in the `CrossChainEnabled` abstraction.
+
+By just extending the class, and adding the modifier, you can make sure that calls not coming from l1 are going to revert.
+
+You can try to call the setGreeting function directly in Optimism, and the call must revert with the custom error: `NotCrossChainCall()`.
+
+There is a task for this too (should be called only after deploying the contract to optimism):
+
+```sh
+ $ hh set-greeting:optimism-l2 --network optimism
+```
+
+This call should fail in the gas estimation, because of the modifier.
+
+Let's go back to the example:
+
+1. Deploy the GreeterOptimismL2 in the Optimism L2 (we are using testnets of course):
+
+   ```sh
+   $ hh deploy --network optimism --tags greeter_optimism_l2
+   ```
+
+- For this step you need ETH in Optimism testnet, you should be able to get some [at this faucet](https://kovan.optifaucet.com/).
+
+2. Deploy the Sender in the Optimism L1 (Kovan):
+
+   ```sh
+    $ hh deploy --network kovan --tags sender_optimism_l1
+   ```
+
+3. Run the `greet:optimism-l2` task to get the GreeterOptimismL2 message before cross-chain call.
+
+   ```sh
+    $ hh greet:optimism-l2 --network optimism
+   ```
+
+4. Run the task for sending the message from Optimism L1 to L2, using the address of the deployed `GreeterOptimismL2` as the `target`, and any message you want:
+
+   ```sh
+    $ hh send-message:optimism-l1-to-l2 --target \
+         [greeter_optimism_l2_address] --greeting \
+         'Hellow World!' --network rinkeby
+   ```
+
+5. Wait between 1 and 3 minutes for the message to be executed in l2.
+
+6. Run the `greet:optimism-l2` task again to get the updated message (if is not updated wait a little longer).
+
+   ```sh
+    $ hh greet:optimism-l2 --network optimism
+   ```
+
+#### Checking the Task code
+
+```ts
+task('send-message:optimism-l1-to-l2', 'Sends a cross-chain message from Optimism l1 to l2.')
+  .addParam('target', 'The address of the contract to call')
+  .addParam('greeting', 'The string representing the greeting')
+  .setAction(async (taskArgs) => {
+    const { L2BridgeFactory } = require('@ericnordelo/cross-chain-bridge-helpers');
+    const { providers, BigNumber } = require('ethers');
+
+    const sender = await ethers.getContract('SenderOptimismL1');
+    const params = web3.eth.abi.encodeParameters(['string'], [taskArgs.greeting]);
+    const greeter = taskArgs.target;
+
+    // get providers urls
+    const OPTIMISM_L1_RPC = hre.config.networks.kovan.url;
+    const OPTIMISM_L2_RPC = hre.config.networks.optimism.url;
+
+    const l1Provider = new providers.JsonRpcProvider(OPTIMISM_L1_RPC);
+    const l2Provider = new providers.JsonRpcProvider(OPTIMISM_L2_RPC);
+
+    // get the bridge helper
+    const bridge = L2BridgeFactory.get('Optimism-L1L2-Kovan');
+    await bridge.loadProviders({ l1Provider, l2Provider });
+
+    // the calldata for setGreeting: function id plus encoded parameters
+    const calldata = '0xa4136862' + params.slice(2);
+
+    // get the crossChainTxParams for the CrossChainEnabled._sendCrossChainMessage
+    const crossChainTxParams = await bridge.getCrossChainTxConfigBytes(
+      sender.address,
+      greeter,
+      calldata,
+      BigNumber.from(0)
+    );
+
+    // sends the cross-chain message to update the greeting
+    const tx = await sender.sendCrossChainMessage(greeter, calldata, crossChainTxParams);
+
+    console.log('Transaction sent: ' + tx.hash);
+  });
+```
