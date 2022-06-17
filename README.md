@@ -413,3 +413,5 @@ task('send-message:optimism-l1-to-l2', 'Sends a cross-chain message from Optimis
     console.log('Transaction sent: ' + tx.hash);
   });
 ```
+
+You can see that the task is quite similar to the one for sending the message from Optimism L1 to L2. This is the power of the `@ericnordelo/cross-chain-bridge-helpers` package and the `CrossChainEnabled` abstraction combined.
