@@ -1,6 +1,6 @@
 # Cross Chain Bridge Examples
 
-This repository is intended to be a set of examples of how to use [@ericnordelo/cross-chain-bridge-helpers](https://github.com/ericnordelo/cross-chain-bridge-helpers) package together with the Openzeppelin cross-chain extensions to send cross-chain messages over different bridges.
+This repository is intended to be a set of examples of how to use [@ericnordelo/cross-chain-bridge-helpers](https://github.com/ericnordelo/cross-chain-bridge-helpers) package together with the Openzeppelin `CrossChainEnabled` abstraction to send cross-chain messages over different bridges.
 
 For now it only support Arbitrum and Optimism L1-L2 bridges.
 
@@ -29,7 +29,7 @@ For now it only support Arbitrum and Optimism L1-L2 bridges.
 
 4. If you want to use different providers, feel free to change the name of the environment variables, and update the `hardhat.config.js` file.
 
-## TS helpers summary
+## TS helpers summary (@ericnordelo/cross-chain-bridge-helpers)
 
 ### Generic usage on any project
 
@@ -108,7 +108,7 @@ Being this repository a set of predefined examples, this plugin is already impor
 
 We are going to use two contracts to test the message delivery: a Greeter.sol and a Sender.sol.
 
-The Greeter's purpose is to store a message (string), and return it through a getter. This is the contract we are going to use to receive the message:
+The Greeter's purpose is to store a message (string), and return it through a getter. This is the contract we are going to use to receive the message, changing the greeting message with cross-chain calls:
 
 ```ts
   contract Greeter {
@@ -204,7 +204,7 @@ The code above is a specific example for Arbitrum L1 to L2 channel, but differen
   }
 ```
 
-This abstraction (and therefore the implementations) also provide us with modifiers to check sender in the receiver (we could add this check to the Greeter).
+This abstraction (and therefore the implementations) also provide us with modifiers to check sender in the receiver (we will add this check to the Greeter in the example 2).
 
 ### Example 1 (send message from arbitrum l1 to l2)
 
@@ -295,6 +295,10 @@ In a general overview, we are using the providers from hardhat to instantiate th
 
 Then we are calling the sendCrossChainMessage with the `target`, the `calldata`, and the configuration for sending the message through the bridge (`crossChainTxParams`).
 
+This config bytes give us flexibility to send different configurations required from different bridges.
+
+The rest of the code should be self explanatory if you are experienced with `hardhat` and Ethereum development.
+
 ### Example 2 (send message from optimism l1 to l2)
 
 For this example we are going to use a different Greeter: `GreeterOptimismL2`.
@@ -319,13 +323,13 @@ For this example we are going to use a different Greeter: `GreeterOptimismL2`.
  }
 ```
 
-Themain difference is that we are extending from the `CrossChainEnabledOptimismL2`, and the purpose of this is to how the usage of the `onlyCrossChain` modifier provided in the `CrossChainEnabled` abstraction.
+The main difference is that we are extending from the `CrossChainEnabledOptimismL2`, and the purpose of this is to how the usage of the `onlyCrossChain` modifier provided in the `CrossChainEnabled` abstraction.
 
 By just extending the class, and adding the modifier, you can make sure that calls not coming from l1 are going to revert.
 
 You can try to call the setGreeting function directly in Optimism, and the call must revert with the custom error: `NotCrossChainCall()`.
 
-There is a task for this too (should be called only after deploying the contract to optimism):
+There is a task for this too (should be called only after deploying the contract to Optimism):
 
 ```sh
  $ hh set-greeting:optimism-l2 --network optimism
