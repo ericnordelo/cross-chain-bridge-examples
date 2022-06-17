@@ -55,12 +55,7 @@ abstract contract CrossChainEnabledArbitrumL1 is CrossChainEnabled {
         bytes memory data,
         bytes memory crossChainTxParams
     ) internal virtual override {
-        uint256 ticketId = LibArbitrumL1.sendCrossChainMessage(
-            _bridge,
-            destination,
-            data,
-            crossChainTxParams
-        );
+        uint256 ticketId = LibArbitrumL1.sendCrossChainMessage(_bridge, destination, data, crossChainTxParams);
 
         emit RetryableTicketCreated(ticketId);
     }

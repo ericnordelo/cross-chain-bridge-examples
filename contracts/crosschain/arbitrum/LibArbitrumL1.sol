@@ -18,7 +18,7 @@ import "../errors.sol";
  */
 library LibArbitrumL1 {
     /**
-     * @dev This is the keccak256('Arbitrum-L1L2')
+     * @dev This is the first 4 bytes of the keccak256('Arbitrum-L1L2')
      */
     bytes4 public constant BRIDGE_ID = 0xf99ba2be;
 
@@ -82,6 +82,7 @@ library LibArbitrumL1 {
         bytes memory data,
         bytes memory crossChainTxParams
     ) internal returns (uint256 ticketId) {
+        // there delayed inbox is the first of the allowedInboxList
         address delayedInbox = ArbitrumL1_Bridge(bridge).allowedInboxList(0);
 
         CrossChainTxParams memory params = abi.decode(crossChainTxParams, (CrossChainTxParams));

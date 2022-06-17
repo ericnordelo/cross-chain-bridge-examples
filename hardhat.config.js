@@ -7,6 +7,9 @@ require('@nomiclabs/hardhat-truffle5');
 require('hardhat-contract-sizer');
 require('hardhat-deploy');
 require('solidity-coverage');
+require('./tasks/deposit-withdraw');
+require('./tasks/send-message');
+require('./tasks/greet');
 
 const MNEMONIC = process.env.MNEMONIC;
 const INFURA_API_KEY = process.env.INFURA_API_KEY;

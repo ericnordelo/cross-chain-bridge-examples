@@ -22,7 +22,7 @@ library LibArbitrumL2 {
     address public constant ARBSYS = 0x0000000000000000000000000000000000000064;
 
     /**
-     * @dev This is the keccak256('Arbitrum-L2L1')
+     * @dev This is the first 4 bytes of the keccak256('Arbitrum-L2L1')
      */
     bytes4 public constant BRIDGE_ID = 0xcf0303bf;
 
