@@ -204,7 +204,7 @@ The code above is a specific example for Arbitrum L1 to L2 channel, but differen
   }
 ```
 
-This abstraction (and therefore the implementations) only provide us with modifiers to check sender in the receiver (we could add this check to the Greeter).
+This abstraction (and therefore the implementations) also provide us with modifiers to check sender in the receiver (we could add this check to the Greeter).
 
 ### Example 1 (send message from arbitrum l1 to l2)
 
@@ -245,3 +245,52 @@ This abstraction (and therefore the implementations) only provide us with modifi
    ```sh
     $ hh greet --network arbitrum
    ```
+
+#### Checking the Task code
+
+```ts
+task('send-message:arbitrum-l1-to-l2', 'Sends a cross-chain message from Arbitrum l1 to l2.')
+  .addParam('target', 'The address of the contract to call')
+  .addParam('greeting', 'The string representing the greeting')
+  .setAction(async (taskArgs) => {
+    const { L2BridgeFactory } = require('@ericnordelo/cross-chain-bridge-helpers');
+    const { providers, BigNumber } = require('ethers');
+
+    const sender = await ethers.getContract('SenderArbitrumL1');
+    const params = web3.eth.abi.encodeParameters(['string'], [taskArgs.greeting]);
+    const greeter = taskArgs.target;
+
+    // get providers urls
+    const ARBITRUM_L1_RPC = hre.config.networks.rinkeby.url;
+    const ARBITRUM_L2_RPC = hre.config.networks.arbitrum.url;
+
+    const l1Provider = new providers.JsonRpcProvider(ARBITRUM_L1_RPC);
+    const l2Provider = new providers.JsonRpcProvider(ARBITRUM_L2_RPC);
+
+    // get the bridge helper
+    const bridge = L2BridgeFactory.get('Arbitrum-L1L2-Rinkeby');
+    await bridge.loadProviders({ l1Provider, l2Provider });
+
+    // the calldata for setGreeting: function id plus encoded parameters
+    const calldata = '0xa4136862' + params.slice(2);
+
+    // get the crossChainTxParams for the CrossChainEnabled._sendCrossChainMessage
+    const crossChainTxParams = await bridge.getCrossChainTxConfigBytes(
+      sender.address,
+      greeter,
+      calldata,
+      BigNumber.from(0)
+    );
+
+    // this value is required to have enough balance in the contract to deposit for the cross-chain call
+    const tx = await sender.sendCrossChainMessage(greeter, calldata, crossChainTxParams, {
+      value: '1747850031751',
+    });
+
+    console.log('Transaction sent: ' + tx.hash);
+  });
+```
+
+In a general overview, we are using the providers from hardhat to instantiate the `L2Bridge`, and we are using this instance to get the `crossChainTxParams` config required for this bridge.
+
+Then we are calling the sendCrossChainMessage with the `target`, the `calldata`, and the configuration for sending the message through the bridge (`crossChainTxParams`).
