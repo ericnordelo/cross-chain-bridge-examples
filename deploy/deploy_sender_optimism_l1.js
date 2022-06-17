@@ -4,7 +4,7 @@ module.exports = async ({ getNamedAccounts, deployments, network }) => {
 
   // only deploy to Kovan testnet
   if (network.name == 'kovan') {
-    // this is theOptimism L1StandardBridge address in Kovan
+    // this is the Optimism L1StandardBridge address in Kovan
     let bridge = '0x22F24361D548e5FaAfb36d1437839f080363982B';
 
     await deploy('SenderOptimismL1', {

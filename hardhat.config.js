@@ -42,6 +42,7 @@ module.exports = {
       },
     },
     optimism: {
+      chainId: 69,
       url: ALCHEMY_OPTIMISM_RPC,
       accounts: { mnemonic: MNEMONIC },
       companionNetworks: {
