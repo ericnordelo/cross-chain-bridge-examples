@@ -3,11 +3,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
 
   // this contract is upgradeable through uups (EIP-1822)
-  await deploy('Greeter', {
+  await deploy('GreeterArbitrumL2', {
     from: deployer,
     log: true,
     args: ['Hello!'],
   });
 };
 
-module.exports.tags = ['greeter'];
+module.exports.tags = ['greeter_arbitrum_l2'];
